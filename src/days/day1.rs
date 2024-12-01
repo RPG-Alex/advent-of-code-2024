@@ -17,29 +17,20 @@ fn part_1() -> i32 {
     for line in content.split("\n") {
         let mut line = line.split_ascii_whitespace().peekable();
         if line.peek().is_some() {
-            let mut list1: Vec<i32> = line
-                .next()
-                .unwrap()
-                .chars()
-                .filter_map(|c| c.to_digit(10).map(|d| d as i32))
-                .collect();
-            let mut list2: Vec<i32> = line
-                .next()
-                .unwrap()
-                .chars()
-                .filter_map(|c| c.to_digit(10).map(|d| d as i32))
-                .collect();
-            list1.sort();
-            list2.sort();
-            for (i, id) in list1.iter().enumerate() {
-                println!("{}", list2[i]);
-                if id >= &list2[i] {
-                    total += list1[i] - list2[i];
-                } else {
-                    total += list2[i] - list1[i];
-                }
-            }
+            let column1: i32 = line.next().unwrap().parse::<i32>().unwrap();
+            let column2: i32 = line.next().unwrap().parse::<i32>().unwrap();
+            list1.push(column1);
+            list2.push(column2);
         }
+    }
+    list1.sort();
+    list2.sort();
+    for (i, id) in list1.iter().enumerate() {
+        let mut result = id - list2[i];
+        if result < 0 {
+            result = result * -1;
+        }
+        total += result;
     }
     return total;
 }
