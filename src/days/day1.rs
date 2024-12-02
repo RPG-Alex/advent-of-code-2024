@@ -1,5 +1,5 @@
 use std::{fs::File, io::Read};
-
+ 
 fn main() {
     let part1 = part_1();
     println!("part 1: {}\n", part1);
