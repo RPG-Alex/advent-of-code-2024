@@ -1,5 +1,6 @@
-use std::{fs::File, io::Read};
+use std::{collections::HashMap, fs::File, io::Read};
 
+#[derive(Debug)]
 struct Parts {
     rule: String,
     pages: String,
@@ -21,8 +22,43 @@ fn main() {
 fn part_1(content: String) -> i32 {
     let mut total = 0;
     let rule_pages = rule_break(content);
-    let mut rules: Vec<(i32, i32)> = rules_helper(rule_pages.rule);
-    let mut pages: Vec<Vec<i32>> = pages_helper(rule_pages.pages);
+    let rules: Vec<(i32, i32)> = rules_helper(rule_pages.rule);
+    let pages_list: Vec<Vec<i32>> = pages_helper(rule_pages.pages);
+
+    let mut adjacent_map: HashMap<i32, Vec<i32>> = HashMap::new();
+
+    for (x, y) in rules.iter() {
+        adjacent_map.entry(*x).or_insert_with(Vec::new).push(*y);
+    }
+
+    for pages in pages_list.iter() {
+        let mut position: HashMap<i32, usize> = HashMap::new();
+        for (i, &page) in pages.iter().enumerate() {
+            position.insert(page, i);
+        }
+        let mut valid_change = true;
+
+        for (&x, targets) in &adjacent_map {
+            for &y in targets {
+                if let (Some(pos_x), Some(pos_y)) = (position.get(&x), position.get(&y)) {
+                    if pos_x >= pos_y {
+                        valid_change = false;
+                        break;
+                    }
+                }
+            }
+
+            if !valid_change {
+                break;
+            }
+        }
+
+        if valid_change {
+            let mid_index = pages.len() / 2;
+            let mid_page = pages[mid_index];
+            total += mid_page;
+        }
+    }
 
     total
 }
@@ -55,7 +91,7 @@ fn pages_helper(content: String) -> Vec<Vec<i32>> {
         .lines()
         .map(|line| {
             if line.contains(",") {
-                let mut line = line.split(",");
+                let line = line.split(",");
                 let mut page_line: Vec<i32> = Vec::new();
                 for p in line.into_iter() {
                     page_line.push(p.parse::<i32>().unwrap());
@@ -72,14 +108,13 @@ fn rule_break(content: String) -> Parts {
         pages: "".to_string(),
         rule: "".to_string(),
     };
-
-    for (i, line) in content.lines().into_iter().enumerate() {
+    let lines: Vec<&str> = content.lines().collect();
+    for (i, line) in lines.iter().enumerate() {
         if !line.contains("|") && !line.contains(",") {
-            broken.rule = content[0..i - 1].to_string();
-            broken.pages = content[i + 1..content.len()].to_string();
+            broken.rule = lines[0..i - 1].join("\n");
+            broken.pages = lines[i + 1..].join("\n");
             break;
         }
     }
-
     broken
 }
