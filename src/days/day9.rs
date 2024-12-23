@@ -73,6 +73,3 @@ fn part_2(disk_map: Vec<usize>) -> i32 {
 
     total
 }
-
-// 5869737430 too low
-//
