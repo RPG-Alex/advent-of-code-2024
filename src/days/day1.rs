@@ -11,7 +11,7 @@ fn part_1() -> i32 {
     let file = File::open("inputs/day1_1");
     let mut content = String::new();
     let _ = file
-        .expect("faled to read file")
+        .expect("failed to read file")
         .read_to_string(&mut content);
     let mut total = 0;
     let mut list1: Vec<i32> = Vec::new();
@@ -41,7 +41,7 @@ fn part_2() -> i32 {
     let file = File::open("inputs/day1_1");
     let mut content = String::new();
     let _ = file
-        .expect("faled to read file")
+        .expect("failed to read file")
         .read_to_string(&mut content);
     let mut total = 0;
     let mut list1: Vec<i32> = Vec::new();
